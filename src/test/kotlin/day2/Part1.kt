@@ -5,41 +5,11 @@ import readText
 
 class Part1 {
 
-    fun solution(input: String) =
-        input.split("\n")
-            .map { it.split(":") }
-            .associate { it.first().split(" ").last() to it.last() }
-            .mapValues { convertToSets(it.value) }
-            .filter { game ->
-                validateGame(game)
-            }.map { it.key.toInt() }
-            .sum()
+    private fun solution(input: String) =
+        toGames(input)
+            .filter { it.isValid() }
+            .sumOf { it.id }
 
-
-    private fun validateGame(game: Map.Entry<String, List<Map<String, Int>>>) =
-        game.value.all { set ->
-            set.all {
-                when (it.key) {
-                    "blue" -> it.value <= 14
-                    "green" -> it.value <= 13
-                    "red" -> it.value <= 12
-                    else -> false
-                }
-            }
-        }
-
-
-    private fun convertToSets(game: String): List<Map<String, Int>> {
-        return game.split(";")
-            .map { set ->
-                set.split(",")
-                    .map { cubes ->
-                        cubes.trim().split(" ")
-                    }.associate {
-                        it.last() to it.first().toInt()
-                    }
-            }
-    }
 
     @Test
     fun test() {
@@ -51,10 +21,9 @@ class Part1 {
             Game 5: 6 red, 1 blue, 3 green; 2 blue, 1 red, 2 green
         """.trimIndent()
 
-        println("Input1 result: ${solution(input1)}")
+        println("Input1 result: ${solution(input1)}. Should be 8")
 
         val input2 = readText("day2/input_part1.txt")
-        println("Input1 result: ${solution(input2)}")
-
+        println("Input1 result: ${solution(input2)}. Should be 3059")
     }
 }
